@@ -1,13 +1,37 @@
+# Comparative Ablation Study: 5-Class Waste Localization Engine
+### An Architectural Evaluation of YOLO11 vs. YOLO26 Backbones
 
-* **Exposure Fluctuations:** Brightness variations between -15% and +15% to simulate changes in indoor and outdoor lighting.
-* **Blur Coefficients:** Injected up to 0.5 pixels of Gaussian blur to account for moving conveyor belts or unsteady camera handling.
-* **Noise Injection:** Mixed in up to 0.5% Salt-and-Pepper pixel noise to prepare the network for low-quality camera sensors.
+Welcome to the engineering portfolio for the **Taco Data Set Model**. This repository documents an end-to-end computer vision research journey tracking the training, preprocessing pipelines, and real-world optimization of object detection models across five primary waste streams: **Cardboard, Glass, Metal, Paper, and Plastic**.
 
-### Dataset Partitions
-* **Training Set:** 11,420 images (Expanded via the 10x augmentation pipeline)
-* **Validation Set:** 381 images (Maintained completely pristine and unaugmented)
-* **Test Set:** 380 images (Maintained completely pristine and unaugmented)
-* **Total Image Bank:** 12,181 total managed frames
+Rather than treating model training as a black box, this project functions as a direct comparative analysis between two distinct computer vision architectures trained on an identical data pipeline:
+1. **YOLO11 (Extra Large):** A high-capacity network utilizing traditional regression layers.
+2. **YOLO26 (Extra Large):** A next-generation object detection framework optimized for highly disciplined end-to-end efficiency.
+
+---
+
+## 📊 1. Dataset Architecture & Pipeline Curation
+
+To maintain strict experimental control, both architectures were trained on an identical data configuration managed natively within Roboflow. 
+
+### Data Preprocessing Configuration
+* **Auto-Orient:** Applied to strip EXIF orientation metadata and standardize image orientation.
+* **Resolution Scaling:** Images were resized using a strict **Stretch to 640x640** mapping to match the native input tensor constraints of both YOLO models.
+* **Contrast Optimization:** Implemented **Adaptive Equalization** to dynamically normalize local image contrast, helping the model isolate edges in poorly lit environments.
+* **Null Filtering:** Disabled (`Do not filter any null images`) to ensure the network explicitly learns background features from frames containing zero objects, drastically reducing false-positive rates in production.
+
+### Data Augmentation Strategy (10x Multiplier)
+To artificially expand the abstract feature space and prevent early network convergence, an augmentation matrix was applied to generate **10 outputs per training example**:
+* **Horizontal Flip:** Standard structural reflection.
+* **Rotation:** Randomly applied between -15° and +15° to simulate varied camera angles.
+* **Brightness Adjustments:** Scaled variance between -15% and +15% to replicate real-world outdoor and indoor lighting flux.
+* **Gaussian Blur:** Applied up to 0.5px to handle motion blur or out-of-focus optics.
+* **Salt-and-Pepper Noise:** Injected up to 0.5% of pixels to simulate sensor grain or low-light hardware limitations.
+
+### Final Dataset Partitions
+* **Training Partition:** 11,420 images (Synthetically augmented via the 10x matrix)
+* **Validation Partition:** 381 images (Pristine, unaugmented)
+* **Testing Partition:** 380 images (Pristine, unaugmented)
+* **Total Image Bank:** 12,181 total images
 
 ---
 
